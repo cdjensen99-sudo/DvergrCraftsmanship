@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ValheimPath Condition="'$(ValheimPath)' == ''">D:\SteamLibrary\steamapps\common\Valheim</ValheimPath>
+    <BepInExPath Condition="'$(BepInExPath)' == ''">$(ValheimPath)\BepInEx</BepInExPath>
+    <BepInExCore>$(BepInExPath)\core</BepInExCore>
+    <ValheimManaged>$(ValheimPath)\valheim_Data\Managed</ValheimManaged>
+    <ModVersion>0.1.0</ModVersion>
+  </PropertyGroup>
+</Project>

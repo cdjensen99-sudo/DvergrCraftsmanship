@@ -1,0 +1,9 @@
+{
+  "name": "DvergrCraftsmanship",
+  "version_number": "0.1.0",
+  "website_url": "https://github.com/cdjensen99-sudo/DvergrCraftsmanship",
+  "description": "Building piece structural support loss scales with the placer's Crafting skill. Build stronger as you become a master craftsman.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2202"
+  ]
+}

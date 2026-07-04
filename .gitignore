@@ -1,0 +1,23 @@
+# Build output
+artifacts/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Local analysis only
+decompiled/
+
+# Deploy pending copies
+*.pending
+
+# OS / IDE
+Thumbs.db
+.DS_Store
+*.swp
+
+# Cursor / local assets
+assets/
