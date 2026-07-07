@@ -1,10 +1,12 @@
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using Jotunn;
 
 namespace DvergrCraftsmanship;
 
 [BepInPlugin(ModConstants.ModGuid, ModConstants.ModName, ModConstants.ModVersion)]
+[BepInDependency(Main.ModGuid)]
 public sealed class DvergrCraftsmanshipPlugin : BaseUnityPlugin
 {
     internal static ManualLogSource Log;
@@ -15,6 +17,8 @@ public sealed class DvergrCraftsmanshipPlugin : BaseUnityPlugin
     {
         Log = Logger;
         ModConfig.Bind(Config);
+        LoadBearingWallPrefabs.Initialize();
+        StructuralWallPrefabs.Initialize();
 
         harmony = new Harmony(ModConstants.ModGuid);
         harmony.PatchAll(typeof(DvergrCraftsmanshipPlugin).Assembly);

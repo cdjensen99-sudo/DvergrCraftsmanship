@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 
 namespace DvergrCraftsmanship.Patches;
@@ -22,6 +23,7 @@ internal static class PieceSetCreatorPatch
     private static void Postfix(Piece __instance, long uid)
     {
         CraftsmanshipService.StampPieceFromPendingPlacement(__instance, uid);
+        StructuralWallSelection.StampPlacedPiece(__instance);
     }
 }
 
@@ -37,9 +39,9 @@ internal static class WearNTearAwakePatch
 [HarmonyPatch(typeof(WearNTear), "GetMaterialProperties")]
 internal static class WearNTearGetMaterialPropertiesPatch
 {
-    private static void Postfix(WearNTear __instance, float maxSupport, ref float horizontalLoss, ref float verticalLoss)
+    private static void Postfix(WearNTear __instance, ref float maxSupport, ref float horizontalLoss, ref float verticalLoss)
     {
-        CraftsmanshipService.ApplyCraftsmanshipToSupportLoss(__instance, maxSupport, ref horizontalLoss, ref verticalLoss);
+        CraftsmanshipService.ApplyCraftsmanshipToSupportLoss(__instance, ref maxSupport, ref horizontalLoss, ref verticalLoss);
     }
 }
 
@@ -58,6 +60,7 @@ internal static class HudUpdateCrosshairPatch
     private static void Postfix(Hud __instance, Player player)
     {
         CraftsmanshipService.AppendIntegrityHoverText(__instance, player);
+        StructuralAnalysis.AppendHoverText(__instance, player);
     }
 }
 
@@ -77,5 +80,53 @@ internal static class SkillsRaiseSkillPatch
         {
             CraftsmanshipService.ShowTierNotification(__instance, __state);
         }
+    }
+}
+
+[HarmonyPatch(typeof(Player), "UpdatePlacement")]
+internal static class PlayerUpdatePlacementPatch
+{
+    private static void Prefix(Player __instance, bool takeInput, float dt)
+    {
+        if (__instance == Player.m_localPlayer)
+        {
+            StructuralWallSelection.HandleHotkeys(__instance, takeInput);
+        }
+    }
+}
+
+[HarmonyPatch(typeof(Player), "SetupPlacementGhost")]
+internal static class PlayerSetupPlacementGhostPatch
+{
+    private static void Postfix(Player __instance)
+    {
+        StructuralWallSelection.OnPlacementGhostSetup(__instance);
+    }
+}
+
+[HarmonyPatch(typeof(Player), "HaveRequirements", typeof(Piece), typeof(Player.RequirementMode))]
+internal static class PlayerHaveRequirementsPatch
+{
+    private static bool Prefix(Player __instance, Piece piece, Player.RequirementMode mode, ref bool __result)
+    {
+        return !StructuralWallSelection.TryEvaluateRequirements(__instance, piece, mode, ref __result);
+    }
+}
+
+[HarmonyPatch(typeof(Player), "ConsumeResources", typeof(Piece.Requirement[]), typeof(int), typeof(int), typeof(int))]
+internal static class PlayerConsumeResourcesPatch
+{
+    private static bool Prefix(Player __instance)
+    {
+        return !StructuralWallSelection.TryConsumeResources(__instance);
+    }
+}
+
+[HarmonyPatch(typeof(Hud), "SetupPieceInfo")]
+internal static class HudSetupPieceInfoPatch
+{
+    private static void Postfix(Hud __instance, Piece piece)
+    {
+        StructuralWallSelection.AppendBuildHudInfo(__instance, piece);
     }
 }

@@ -25,8 +25,23 @@ This release includes only the working structural-integrity system:
 - Hammer reinforcement for full-health pieces
 - Hammer-hover display showing the stored support-loss reduction
 - Crafting tier notifications
+- Bronze Load-Bearing wall variants, proof-of-concept reinforced building pieces
 
-This release does **not** add new build pieces yet. Load-bearing walls, nail-gated variants, firebreak walls, headers, and similar future pieces are intentionally not included in this package.
+This release includes the first reinforced wall family. Iron tiers, firebreak walls, headers, reinforced beams, and other future craftsmanship pieces are intentionally not included yet.
+
+## Bronze Load-Bearing Walls
+
+Bronze Load-Bearing Walls are reinforced versions of vanilla wood wall pieces.
+
+- Full wall: `2 Wood` and `2 Bronze Nails`
+- Half wall: `1 Wood` and `1 Bronze Nail`
+- 1x1 wall: `1 Wood` and `1 Bronze Nail`
+- Unlocked through vanilla material progression, not Crafting skill gating
+- Uses the matching vanilla wall footprint and snapping behavior
+- Visually marked with bracing and bronze accents
+- Has a stronger structural baseline while still benefiting from the Crafting-skill support-loss reduction
+
+These are the first proof-of-concept build pieces for future craftsmanship variants.
 
 ## How The Bonus Works
 
@@ -104,10 +119,10 @@ Install with a mod manager, or manually place `DvergrCraftsmanship.dll` into:
 BepInEx/plugins/DvergrCraftsmanship/
 ```
 
-Requires BepInExPack Valheim.
+Requires BepInExPack Valheim and Jotunn.
 
 ## Support
 
-Bug reports and feature requests:
+**Feedback and bug reports:** [Team Extreme Discord](https://discord.gg/cCNG8xKXMn) — use `#dvergrcraftsmanship` and `#bug-reports`
 
-[GitHub - Dvergr Craftsmanship](https://github.com/cdjensen99-sudo/DvergrCraftsmanship/issues)
+GitHub issues: [Dvergr Craftsmanship](https://github.com/cdjensen99-sudo/DvergrCraftsmanship/issues)

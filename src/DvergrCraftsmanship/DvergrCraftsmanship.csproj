@@ -21,6 +21,10 @@
       <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Jotunn">
+      <HintPath>C:\Users\cdjen\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Default\BepInEx\plugins\ValheimModding-Jotunn\Jotunn.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="assembly_valheim">
       <HintPath>$(ValheimManaged)\assembly_valheim.dll</HintPath>
       <Private>false</Private>
@@ -41,9 +45,32 @@
       <HintPath>$(ValheimManaged)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ValheimManaged)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(ValheimManaged)\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ValheimManaged)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
+
+  <Target Name="DeployToR2ModManProfile" AfterTargets="Build">
+    <Copy
+      SourceFiles="$(OutputPath)$(AssemblyName).dll"
+      DestinationFolder="$(ModDeployDir)"
+      SkipUnchangedFiles="true"
+      Condition="Exists('$(ModDeployDir)')" />
+    <Message
+      Importance="high"
+      Text="Deployed $(AssemblyName).dll to $(ModDeployDir)"
+      Condition="Exists('$(ModDeployDir)')" />
+    <Warning
+      Text="Mod deploy folder not found (skipped copy): $(ModDeployDir)"
+      Condition="!Exists('$(ModDeployDir)')" />
+  </Target>
 </Project>
