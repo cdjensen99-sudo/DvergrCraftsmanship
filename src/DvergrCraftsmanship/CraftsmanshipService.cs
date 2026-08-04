@@ -80,15 +80,12 @@ internal static class CraftsmanshipService
             (_, skillLevel, multiplier) => TryApplyReinforcement(wear, skillLevel, multiplier));
     }
 
-    internal static void ApplyCraftsmanshipToSupportLoss(WearNTear wear, ref float maxSupport, ref float horizontalLoss, ref float verticalLoss)
+    internal static void ApplyCraftsmanshipToSupportLoss(WearNTear wear, float maxSupport, ref float horizontalLoss, ref float verticalLoss)
     {
         if (!IsEnabled() || wear == null || maxSupport <= 0f)
         {
             return;
         }
-
-        LoadBearingWallPrefabs.TryApplyLoadBearingStats(wear, ref maxSupport, ref horizontalLoss, ref verticalLoss);
-        StructuralWallSelection.TryApplyStructuralStats(wear, ref maxSupport, ref horizontalLoss, ref verticalLoss);
 
         ZNetView nview = wear.GetComponent<ZNetView>();
         bool hasView = nview != null;
@@ -219,11 +216,27 @@ internal static class CraftsmanshipService
         }
 
         WearNTear wear = hoveringPiece.GetComponent<WearNTear>();
+        if (wear == null)
+        {
+            return;
+        }
+
         ZDO zdo = GetZdo(wear);
         if (zdo == null)
         {
             return;
         }
+
+        float multiplier = GetStoredMultiplier(zdo, 0f);
+        if (multiplier <= 0f)
+        {
+            return;
+        }
+
+        float skillLevel = zdo.GetFloat(ModConstants.ZdoCraftSkillHash, 0f);
+        string pieceName = Localization.instance != null ? Localization.instance.Localize(hoveringPiece.m_name) : hoveringPiece.m_name;
+        string bonus = FormatBonusPercent(GetSupportLossReductionPercent(multiplier));
+        string details = $"{bonus}% support loss (Crafting {skillLevel:0})";
 
         object hoverName = HudHoverNameField?.GetValue(hud);
         if (hoverName == null)
@@ -238,32 +251,11 @@ internal static class CraftsmanshipService
         }
 
         string current = textProperty.GetValue(hoverName) as string;
-        string updated = current;
-        bool changed = false;
+        string updated = string.IsNullOrWhiteSpace(current)
+            ? $"{pieceName}\n{details}"
+            : $"{current}\n{details}";
 
-        if (StructuralWallPrefabs.IsStructuralWall(hoveringPiece))
-        {
-            StructuralWallSelection.AppendPlacedHoverText(hoveringPiece, ref updated);
-            changed = updated != current;
-        }
-
-        float multiplier = GetStoredMultiplier(zdo, 0f);
-        if (multiplier > 0f)
-        {
-            float skillLevel = zdo.GetFloat(ModConstants.ZdoCraftSkillHash, 0f);
-            string pieceName = Localization.instance != null ? Localization.instance.Localize(hoveringPiece.m_name) : hoveringPiece.m_name;
-            string bonus = FormatBonusPercent(GetSupportLossReductionPercent(multiplier));
-            string details = $"{bonus}% support loss (Crafting {skillLevel:0})";
-            updated = string.IsNullOrWhiteSpace(updated)
-                ? $"{pieceName}\n{details}"
-                : $"{updated}\n{details}";
-            changed = true;
-        }
-
-        if (changed)
-        {
-            textProperty.SetValue(hoverName, updated);
-        }
+        textProperty.SetValue(hoverName, updated);
     }
 
     private static bool IsEnabled()
@@ -403,6 +395,11 @@ internal static class CraftsmanshipService
 
     private static ZDO GetZdo(WearNTear wear)
     {
+        if (wear == null)
+        {
+            return null;
+        }
+
         ZNetView nview = wear.GetComponent<ZNetView>();
         if (nview == null || !nview.IsValid())
         {
