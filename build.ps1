@@ -1,6 +1,6 @@
 param(
     [string]$ValheimPath = "D:\SteamLibrary\steamapps\common\Valheim",
-    [string]$DeployProfile = "C:\Users\cdjen\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Default",
+    [string]$DeployProfile = "C:\Users\cdjen\AppData\Roaming\com.kesomannen.gale\valheim\profiles\New Release",
     [switch]$Deploy,
     [switch]$Package
 )
@@ -18,16 +18,41 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "Built: $dll"
 
 if ($Deploy) {
-    $pluginDir = Join-Path $DeployProfile "BepInEx\plugins\DvergrCraftsmanship"
-    $duplicateDir = Join-Path $DeployProfile "BepInEx\plugins\Unknown-DvergrCraftsmanship.dll"
+    $pluginDir = Join-Path $DeployProfile "BepInEx\plugins\Hardwire99-DvergrCraftsmanship"
+    $legacyDir = Join-Path $DeployProfile "BepInEx\plugins\DvergrCraftsmanship"
+    $cacheDir = Join-Path $env:USERPROFILE "AppData\Roaming\com.kesomannen.gale\cache\Hardwire99-DvergrCraftsmanship\$($manifest.version_number)\BepInEx\plugins\Hardwire99-DvergrCraftsmanship"
     New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
     $dest = Join-Path $pluginDir "DvergrCraftsmanship.dll"
 
+    $filesToCopy = @(
+        @{ Src = $dll; Name = "DvergrCraftsmanship.dll" },
+        @{ Src = (Join-Path $thunderstore "manifest.json"); Name = "manifest.json" },
+        @{ Src = (Join-Path $thunderstore "CHANGELOG.md"); Name = "CHANGELOG.md" },
+        @{ Src = (Join-Path $thunderstore "README.md"); Name = "README.md" }
+    )
+    $icon = Join-Path $thunderstore "icon.png"
+    if (Test-Path $icon) {
+        $filesToCopy += @{ Src = $icon; Name = "icon.png" }
+    }
+
     try {
-        Copy-Item $dll $dest -Force
-        Copy-Item (Join-Path $thunderstore "manifest.json") (Join-Path $pluginDir "manifest.json") -Force
-        Copy-Item (Join-Path $thunderstore "CHANGELOG.md") (Join-Path $pluginDir "CHANGELOG.md") -Force
+        foreach ($f in $filesToCopy) {
+            if (Test-Path $f.Src) {
+                Copy-Item $f.Src (Join-Path $pluginDir $f.Name) -Force
+            }
+        }
         Write-Host "Deployed to $dest"
+
+        # Gale re-copies from cache on launch; keep cache in sync or the July package comes back.
+        if (Test-Path (Split-Path $cacheDir)) {
+            New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+            foreach ($f in $filesToCopy) {
+                if (Test-Path $f.Src) {
+                    Copy-Item $f.Src (Join-Path $cacheDir $f.Name) -Force
+                }
+            }
+            Write-Host "Synced Gale cache: $cacheDir"
+        }
     }
     catch {
         $pending = Join-Path $pluginDir "DvergrCraftsmanship.dll.pending"
@@ -36,9 +61,9 @@ if ($Deploy) {
         Write-Host "Built update saved to $pending"
     }
 
-    if (Test-Path $duplicateDir) {
-        Remove-Item $duplicateDir -Recurse -Force
-        Write-Host "Removed duplicate plugin folder: $duplicateDir"
+    if (Test-Path $legacyDir) {
+        Remove-Item $legacyDir -Recurse -Force
+        Write-Host "Removed legacy plugin folder: $legacyDir"
     }
 }
 

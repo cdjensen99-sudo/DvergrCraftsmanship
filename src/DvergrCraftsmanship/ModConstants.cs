@@ -3,9 +3,10 @@ namespace DvergrCraftsmanship;
 internal static class ModConstants
 {
     internal const string ModName = "Dvergr Craftsmanship";
-    internal const string ModVersion = "0.1.1";
+    internal const string ModVersion = "1.0.0";
     internal const string ModGuid = "com.cdjensen.dvergrcraftsmanship";
     internal const string ConfigFolder = "DvergrCraftsmanship";
+    internal const string AnalysisConfigFolder = "Analysis";
 
     internal const string ZdoIntegrityMultiplier = "DvergrCraft_IntegrityMult";
     internal const string ZdoCraftSkill = "DvergrCraft_CraftSkill";

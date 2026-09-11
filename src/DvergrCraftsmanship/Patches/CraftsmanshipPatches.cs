@@ -37,18 +37,30 @@ internal static class WearNTearAwakePatch
 [HarmonyPatch(typeof(WearNTear), "GetMaterialProperties")]
 internal static class WearNTearGetMaterialPropertiesPatch
 {
-    private static void Postfix(WearNTear __instance, float maxSupport, ref float horizontalLoss, ref float verticalLoss)
+    // Valheim 1.0: out maxSupport, out minSupport, out horizontalLoss, out verticalLoss.
+    // Harmony binds out/ref by parameter name — all four must be present as ref.
+    private static void Postfix(
+        WearNTear __instance,
+        ref float maxSupport,
+        ref float minSupport,
+        ref float horizontalLoss,
+        ref float verticalLoss)
     {
-        CraftsmanshipService.ApplyCraftsmanshipToSupportLoss(__instance, maxSupport, ref horizontalLoss, ref verticalLoss);
+        CraftsmanshipService.ApplyCraftsmanshipToSupportLoss(
+            __instance,
+            maxSupport,
+            ref horizontalLoss,
+            ref verticalLoss);
     }
 }
 
 [HarmonyPatch(typeof(Player), "Repair")]
 internal static class PlayerRepairPatch
 {
-    private static bool Prefix(Player __instance, ItemDrop.ItemData toolItem)
+    // Valheim 1.0: Repair(ItemDrop.ItemData toolItem, Piece repairPiece)
+    private static bool Prefix(Player __instance, ItemDrop.ItemData toolItem, Piece repairPiece)
     {
-        return !CraftsmanshipService.TryHandleReinforceRepair(__instance, toolItem);
+        return !CraftsmanshipService.TryHandleReinforceRepair(__instance, toolItem, repairPiece);
     }
 }
 
@@ -58,6 +70,7 @@ internal static class HudUpdateCrosshairPatch
     private static void Postfix(Hud __instance, Player player)
     {
         CraftsmanshipService.AppendIntegrityHoverText(__instance, player);
+        StructuralAnalysis.AppendHoverText(__instance, player);
     }
 }
 

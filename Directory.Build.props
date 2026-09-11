@@ -1,11 +1,13 @@
 <Project>
   <PropertyGroup>
+    <!-- Valheim 1.0.7 / Unity 6 (6000.0.75) — always compile against this Managed folder -->
     <ValheimPath Condition="'$(ValheimPath)' == ''">D:\SteamLibrary\steamapps\common\Valheim</ValheimPath>
-    <BepInExPath Condition="'$(BepInExPath)' == ''">$(ValheimPath)\BepInEx</BepInExPath>
-    <BepInExCore>$(BepInExPath)\core</BepInExCore>
     <ValheimManaged>$(ValheimPath)\valheim_Data\Managed</ValheimManaged>
-    <ModVersion>0.1.1</ModVersion>
-    <R2ModManProfile>Testing</R2ModManProfile>
-    <ModDeployDir>$(USERPROFILE)\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\$(R2ModManProfile)\BepInEx\plugins\Hardwire99-DvergrCraftsmanship</ModDeployDir>
+    <!-- Gale "New Release" profile: BepInExPack 5.4.2350 (Unity 6 pack) -->
+    <GaleProfile Condition="'$(GaleProfile)' == ''">$(USERPROFILE)\AppData\Roaming\com.kesomannen.gale\valheim\profiles\New Release</GaleProfile>
+    <BepInExPath Condition="'$(BepInExPath)' == ''">$(GaleProfile)\BepInEx</BepInExPath>
+    <BepInExCore>$(BepInExPath)\core</BepInExCore>
+    <ModVersion>1.0.0</ModVersion>
+    <ModDeployDir>$(GaleProfile)\BepInEx\plugins\Hardwire99-DvergrCraftsmanship</ModDeployDir>
   </PropertyGroup>
 </Project>

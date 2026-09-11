@@ -120,7 +120,7 @@ internal static class CraftsmanshipService
             $"Support material patch hit for {pieceName}: material={wear.m_materialType}, owner={isOwner}, skill={skillLevel:0.#}, multiplier={multiplier:0.###}, max={maxSupport:0.###}, hLoss={oldHorizontalLoss:0.###}->{horizontalLoss:0.###}, vLoss={oldVerticalLoss:0.###}->{verticalLoss:0.###}, currentSupport={support:0.###}, frame={Time.frameCount}");
     }
 
-    internal static bool TryHandleReinforceRepair(Player player, ItemDrop.ItemData toolItem)
+    internal static bool TryHandleReinforceRepair(Player player, ItemDrop.ItemData toolItem, Piece repairPiece)
     {
         if (!IsEnabled() || !ModConfig.EnableReinforce.Value || player == null || toolItem == null)
         {
@@ -132,13 +132,16 @@ internal static class CraftsmanshipService
             return false;
         }
 
-        Piece hoveringPiece = player.GetHoveringPiece();
-        if (hoveringPiece == null)
+        // Valheim 1.0 calls Repair(toolItem, selectedPiece) where selectedPiece is the hammer's
+        // Repair menu entry (m_repairPiece=true), NOT the hovered world piece. Always use hover.
+        Piece targetPiece = player.GetHoveringPiece();
+        if (targetPiece == null)
         {
+            DebugLog("Reinforce skipped: no hovering piece.");
             return false;
         }
 
-        WearNTear wear = hoveringPiece.GetComponent<WearNTear>();
+        WearNTear wear = targetPiece.GetComponent<WearNTear>();
         if (wear == null || !IsFullHealth(wear))
         {
             return false;
@@ -148,10 +151,13 @@ internal static class CraftsmanshipService
         float multiplier = ComputeMultiplier(skillLevel);
         if (!CanImprove(wear, skillLevel, multiplier))
         {
+            DebugLog(
+                $"Reinforce skipped: Crafting {skillLevel:0} / x{multiplier:0.###} not enough above stored " +
+                $"(need +{ModConfig.MinimumReinforceSkillDelta.Value} skill).");
             return false;
         }
 
-        if (!HasRepairAccess(player, hoveringPiece))
+        if (!HasRepairAccess(player, targetPiece))
         {
             return true;
         }
@@ -161,7 +167,7 @@ internal static class CraftsmanshipService
             return false;
         }
 
-        ConsumeRepairSwing(player, hoveringPiece, toolItem, skillLevel, multiplier);
+        ConsumeRepairSwing(player, targetPiece, toolItem, skillLevel, multiplier);
         return true;
     }
 
@@ -199,7 +205,8 @@ internal static class CraftsmanshipService
             MessageHud.MessageType.TopLeft,
             $"Dvergr Craftsmanship: {GetTierName(threshold)} reached. Future builds gain stronger integrity.",
             0,
-            null);
+            null,
+            log: false);
     }
 
     internal static void AppendIntegrityHoverText(Hud hud, Player player)
@@ -427,7 +434,8 @@ internal static class CraftsmanshipService
             MessageHud.MessageType.TopLeft,
             $"Reinforced {pieceName}: Crafting {skillLevel:0}, support loss -{bonusPercent:0.#}%",
             0,
-            null);
+            null,
+            log: false);
 
         ConsumeBuildStamina(player);
         player.UseEitr(toolItem.m_shared.m_attack.m_attackEitr);

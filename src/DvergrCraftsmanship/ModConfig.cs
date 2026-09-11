@@ -12,6 +12,12 @@ internal static class ModConfig
     internal static ConfigEntry<bool> ShowIntegrityHoverText;
     internal static ConfigEntry<bool> DebugLogging;
 
+    internal static ConfigEntry<bool> EnableAnalysisMode;
+    internal static ConfigEntry<bool> ShowPrefabName;
+    internal static ConfigEntry<bool> ShowRawStructuralValue;
+    internal static ConfigEntry<bool> ShowCurrentStructuralValue;
+    internal static ConfigEntry<bool> ShowCraftingLossReduction;
+
     internal static void Bind(ConfigFile config)
     {
         EnableMod = config.Bind(
@@ -59,5 +65,35 @@ internal static class ModConfig
             "DebugLogging",
             false,
             "Enable verbose debug logging for placement stamps and reinforcement.");
+
+        EnableAnalysisMode = config.Bind(
+            ModConstants.AnalysisConfigFolder,
+            "EnableAnalysisMode",
+            true,
+            "Show a verbose [Analysis] structural diagnostics block while hammer-hovering any WearNTear piece.");
+
+        ShowPrefabName = config.Bind(
+            ModConstants.AnalysisConfigFolder,
+            "ShowPrefabName",
+            true,
+            "In analysis mode, show localized display name and real prefab name.");
+
+        ShowRawStructuralValue = config.Bind(
+            ModConstants.AnalysisConfigFolder,
+            "ShowRawStructuralValue",
+            true,
+            "In analysis mode, show vanilla baseline maxSupport/minSupport/loss values from material type (unmodified by this mod).");
+
+        ShowCurrentStructuralValue = config.Bind(
+            ModConstants.AnalysisConfigFolder,
+            "ShowCurrentStructuralValue",
+            true,
+            "In analysis mode, show the piece's live support value from WearNTear.GetSupport().");
+
+        ShowCraftingLossReduction = config.Bind(
+            ModConstants.AnalysisConfigFolder,
+            "ShowCraftingLossReduction",
+            true,
+            "In analysis mode, show this mod's Crafting-skill loss reduction when ZDO data exists, otherwise 'no data'.");
     }
 }
