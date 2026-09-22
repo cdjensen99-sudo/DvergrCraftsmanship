@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+- Reinforce now claims ZDO ownership for the player who clicks repair, then applies the Crafting stamp locally
+- Fixes multiplayer reinforce where non-owners previously relied on an RPC and the hovered piece could stay at the old skill
+
 ## 1.0.0
 - Valheim 1.0 / Unity 6 compliance (BepInExPack 5.4.2350)
 - Retargeted `WearNTear.GetMaterialProperties` postfix for the four-parameter out signature (`maxSupport`, `minSupport`, `horizontalLoss`, `verticalLoss`)

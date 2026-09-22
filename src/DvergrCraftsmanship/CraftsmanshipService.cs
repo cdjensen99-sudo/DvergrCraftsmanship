@@ -331,13 +331,15 @@ internal static class CraftsmanshipService
             return false;
         }
 
-        if (nview.IsOwner())
+        // Reinforcing is a claim-ownership action: the player clicking repair must own
+        // the ZDO before writing Crafting skill / integrity multiplier fields.
+        if (!nview.IsOwner())
         {
-            return TryApplyReinforcement(wear, skillLevel, multiplier);
+            nview.ClaimOwnership();
+            DebugLog($"Claimed ownership of {wear.name} for reinforcement.");
         }
 
-        nview.InvokeRPC(ModConstants.RpcReinforce, skillLevel, multiplier);
-        return true;
+        return TryApplyReinforcement(wear, skillLevel, multiplier);
     }
 
     private static bool TryApplyReinforcement(WearNTear wear, float skillLevel, float multiplier)

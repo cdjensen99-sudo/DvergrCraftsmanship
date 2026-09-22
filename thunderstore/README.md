@@ -18,7 +18,7 @@ In practical terms:
 
 ## Current Release Scope
 
-This **1.0.0** release is Valheim 1.0 / Unity 6 compliant and includes the structural-integrity system:
+This **1.0.1** release is Valheim 1.0 / Unity 6 compliant and includes the structural-integrity system:
 
 - Crafting-skill-based support-loss reduction
 - Permanent per-piece skill snapshot
@@ -62,7 +62,7 @@ If `EnableReinforce` is enabled, you can improve an existing full-health piece w
 4. Use repair.
 5. If your current Crafting skill is high enough above the piece's stored skill (default +5), the piece is reinforced.
 
-Reinforcement never lowers a piece's stored bonus. A lower-skilled player can still perform ordinary repairs, but they cannot downgrade a master-built piece.
+On multiplayer, the player who clicks repair claims ownership of that piece's ZDO so the Crafting stamp can be written locally. Reinforcement never lowers a piece's stored bonus. A lower-skilled player can still perform ordinary repairs, but they cannot downgrade a master-built piece.
 
 ## Hover Display
 

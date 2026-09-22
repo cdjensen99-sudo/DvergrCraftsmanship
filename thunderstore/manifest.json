@@ -1,6 +1,6 @@
 {
   "name": "DvergrCraftsmanship",
-  "version_number": "1.0.0",
+  "version_number": "1.0.1",
   "website_url": "https://github.com/cdjensen99-sudo/DvergrCraftsmanship",
   "description": "Building piece structural support loss scales with the placer's Crafting skill. Build stronger as you become a master craftsman.",
   "dependencies": [

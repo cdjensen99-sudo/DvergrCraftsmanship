@@ -7,7 +7,7 @@
     <GaleProfile Condition="'$(GaleProfile)' == ''">$(USERPROFILE)\AppData\Roaming\com.kesomannen.gale\valheim\profiles\New Release</GaleProfile>
     <BepInExPath Condition="'$(BepInExPath)' == ''">$(GaleProfile)\BepInEx</BepInExPath>
     <BepInExCore>$(BepInExPath)\core</BepInExCore>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <ModDeployDir>$(GaleProfile)\BepInEx\plugins\Hardwire99-DvergrCraftsmanship</ModDeployDir>
   </PropertyGroup>
 </Project>
